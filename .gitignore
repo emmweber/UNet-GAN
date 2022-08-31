@@ -2,4 +2,5 @@
 data/
 __pycache__/
 results/
-wandb/
+wandb
+.ipynb_checkpoints/
