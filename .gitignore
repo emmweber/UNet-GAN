@@ -1,3 +1,5 @@
 # ignore the data file
 data/
 __pycache__/
+results/
+wandb/

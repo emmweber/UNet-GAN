@@ -12,8 +12,9 @@ import usefull_functions as usf
 
 
 class DataPreparation:
-    def __init__(self, x_init, y_init, test_size=0.15, option_save=False,normalization=False,slice_padding=False,slice_padding_size=128):
-
+    def __init__(self, x_init, y_init, test_size=0.15, val_size=0.2,option_save=False,normalization=False,slice_padding=False,slice_padding_size=128, seed=123456):
+        
+        self.seed=seed
         # reshape the data
         self.reshape_data3D(x_init, y_init)
         self.X_max = 'None'
@@ -32,7 +33,7 @@ class DataPreparation:
         if normalization:
             self.data_normalization()
         # train/test split
-        self.build_train_test(test_size=test_size, option_save=option_save)
+        self.build_train_test(test_size=test_size, val_size=val_size,option_save=option_save)
 
     def check_dir(self):
 
@@ -60,15 +61,18 @@ class DataPreparation:
         self.X = self.X * self.X_max
         self.Y = self.Y * self.Y_max
 
-    def build_train_test(self, test_size=0.1, option_save=False):
-        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(self.X, self.Y, test_size=test_size,
-                                                                                random_state=1234)
+    def build_train_test(self, test_size=0.1,  val_size=0.1,option_save=False):
+        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(self.X, self.Y, test_size=test_size,                                                                               random_state=self.seed)
+        
+        self.X_train, self.X_val, self.Y_train, self.Y_val = train_test_split(self.X_train, self.Y_train, test_size=val_size,                                                             random_state=self.seed)
 
         if option_save:
             np.save(self.dir_name + '/X_train.npy', self.X_train)
+            np.save(self.dir_name + '/X_val.npy', self.X_val)
             np.save(self.dir_name + '/X_test.npy', self.X_test)
             np.save(self.dir_name + '/Y_train.npy', self.Y_train)
             np.save(self.dir_name + '/Y_test.npy', self.Y_test)
+            np.save(self.dir_name + '/Y_val.npy', self.Y_val)
             
     def padding_slice_data(self,padding):
                
